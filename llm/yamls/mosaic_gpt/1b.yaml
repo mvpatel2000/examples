@@ -111,8 +111,9 @@ callbacks:
   lr_monitor: {}
   memory_monitor: {}
 
-# loggers:
-#   wandb: {}
+loggers:
+    wandb:     # Uncomment and fill below arguments to use WandB logger
+      name: llm-gpt-1b
 
 # Checkpoint to local filesystem or remote object store
 # save_interval: 2000ba
