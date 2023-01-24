@@ -58,10 +58,8 @@ def main(config):
 
     # Divide batch sizes by number of devices if running multi-gpu training
     train_batch_size = config.train_dataset.batch_size
-    eval_batch_size = config.eval_dataset.batch_size
     if dist.get_world_size():
         train_batch_size //= dist.get_world_size()
-        eval_batch_size //= dist.get_world_size()
 
     # Train dataset
     print('Building train dataloader')
@@ -80,23 +78,6 @@ def main(config):
         persistent_workers=True)
 
     print('Built train dataloader\n')
-
-    # Validation dataset
-    print('Building evaluation dataloader')
-    eval_dataspec = build_imagenet_dataspec(
-        data_path=config.eval_dataset.path,
-        is_streaming=config.train_dataset.is_streaming,
-        batch_size=eval_batch_size,
-        local=config.eval_dataset.local,
-        is_train=False,
-        drop_last=False,
-        shuffle=False,
-        resize_size=config.eval_dataset.resize_size,
-        crop_size=config.eval_dataset.crop_size,
-        num_workers=8,
-        pin_memory=True,
-        persistent_workers=True)
-    print('Built evaluation dataloader\n')
 
     # Instantiate torchvision ResNet model
     print('Building Composer model')
@@ -188,8 +169,6 @@ def main(config):
         run_name=config.run_name,
         model=composer_model,
         train_dataloader=train_dataspec,
-        eval_dataloader=eval_dataspec,
-        eval_interval='1ep',
         optimizers=optimizer,
         schedulers=lr_scheduler,
         algorithms=algorithms,
@@ -209,8 +188,6 @@ def main(config):
     print('Logging config')
     log_config(config)
 
-    print('Run evaluation')
-    trainer.eval()
     if config.is_train:
         print('Train!')
         trainer.fit()
