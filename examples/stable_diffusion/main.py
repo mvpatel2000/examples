@@ -119,7 +119,9 @@ def main(config: DictConfig):  # type: ignore
         device=device,
         precision=config.precision,
         grad_accum=config.grad_accum,
-        seed=config.seed)
+        seed=config.seed,
+        python_log_level='info',
+    )
 
     print('Logging config')
     log_config(config)
