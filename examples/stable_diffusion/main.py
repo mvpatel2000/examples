@@ -9,7 +9,9 @@ import sys
 import torch
 from callbacks import LogDiffusionImages
 from composer import Trainer
-from composer.algorithms import EMA, LowPrecisionLayerNorm, LowPrecisionGroupNorm
+from composer.core import Precision
+from composer.algorithms import EMA
+import composer.functional as cf
 from composer.callbacks import LRMonitor, MemoryMonitor, SpeedMonitor
 from composer.optim import ConstantScheduler
 from composer.utils import dist, reproducibility
@@ -92,9 +94,9 @@ def main(config: DictConfig):  # type: ignore
     if config.use_ema:
         algorithms.append(EMA(half_life='100ba', update_interval='20ba'))
     if config.use_low_precision_layer_norm:
-        algorithms.append(LowPrecisionLayerNorm())
+        cf.apply_low_precision_layernorm(model.unet, optimizer, Precision.AMP_FP16)
     if config.use_low_precision_group_norm:
-        algorithms.append(LowPrecisionGroupNorm())
+        cf.apply_low_precision_groupnorm(model.unet, optimizer, Precision.AMP_FP16)
 
     # Create the Trainer!
     print('Building Trainer')
