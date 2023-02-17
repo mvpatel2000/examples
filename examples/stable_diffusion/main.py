@@ -94,45 +94,43 @@ def main(config: DictConfig):  # type: ignore
     if config.use_ema:
         algorithms.append(EMA(half_life='100ba', update_interval='20ba'))
     if config.use_low_precision_layer_norm:
-        print('Applying low precision layernorm')
         cf.apply_low_precision_layernorm(model.unet, optimizer, Precision.AMP_FP16)
     if config.use_low_precision_group_norm:
-        print('Applying low precision groupnorm')
         cf.apply_low_precision_groupnorm(model.unet, optimizer, Precision.AMP_FP16)
 
-    # # Create the Trainer!
-    # print('Building Trainer')
-    # trainer = Trainer(
-    #     run_name=config.run_name,
-    #     model=model,
-    #     train_dataloader=train_dataspec,
-    #     eval_dataloader=eval_dataspec,
-    #     optimizers=optimizer,
-    #     schedulers=lr_scheduler,
-    #     algorithms=algorithms,
-    #     loggers=loggers,
-    #     max_duration=config.max_duration,
-    #     eval_interval=config.eval_interval,
-    #     callbacks=[speed_monitor, lr_monitor, memory_monitor, image_logger],
-    #     save_folder=config.save_folder,
-    #     save_interval=config.save_interval,
-    #     save_num_checkpoints_to_keep=config.save_num_checkpoints_to_keep,
-    #     load_path=config.load_path,
-    #     device=device,
-    #     precision=config.precision,
-    #     grad_accum=config.grad_accum,
-    #     seed=config.seed,
-    # )
+    # Create the Trainer!
+    print('Building Trainer')
+    trainer = Trainer(
+        run_name=config.run_name,
+        model=model,
+        train_dataloader=train_dataspec,
+        eval_dataloader=eval_dataspec,
+        optimizers=optimizer,
+        schedulers=lr_scheduler,
+        algorithms=algorithms,
+        loggers=loggers,
+        max_duration=config.max_duration,
+        eval_interval=config.eval_interval,
+        callbacks=[speed_monitor, lr_monitor, memory_monitor, image_logger],
+        save_folder=config.save_folder,
+        save_interval=config.save_interval,
+        save_num_checkpoints_to_keep=config.save_num_checkpoints_to_keep,
+        load_path=config.load_path,
+        device=device,
+        precision=config.precision,
+        grad_accum=config.grad_accum,
+        seed=config.seed,
+    )
 
-    # print('Logging config')
-    # log_config(config)
+    print('Logging config')
+    log_config(config)
 
-    # print('Eval!')
-    # trainer.eval()  # show outputs from model without fine-tuning.
+    print('Eval!')
+    trainer.eval()  # show outputs from model without fine-tuning.
 
-    # print('Train!')
-    # trainer.fit()
-    # return trainer  # Return trainer for testing purposes.
+    print('Train!')
+    trainer.fit()
+    return trainer  # Return trainer for testing purposes.
 
 
 if __name__ == '__main__':
