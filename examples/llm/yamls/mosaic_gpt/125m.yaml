@@ -108,9 +108,13 @@ callbacks:
     window_size: 10
   lr_monitor: {}
   memory_monitor: {}
+  runtime_estimator: {}
 
-# loggers:
-#   wandb: {}
+loggers:
+  wandb:
+    entity: mosaic-ml
+    project: runtime-estimator
+    name: ${COMPOSER_RUN_NAME}
 
 # Checkpoint to local filesystem or remote object store
 # save_interval: 500ba
