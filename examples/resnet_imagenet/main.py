@@ -12,7 +12,7 @@ from composer import Trainer
 from composer.algorithms import (EMA, SAM, BlurPool, ChannelsLast, ColOut,
                                  LabelSmoothing, MixUp, ProgressiveResizing,
                                  RandAugment, StochasticDepth)
-from composer.callbacks import LRMonitor, MemoryMonitor, SpeedMonitor
+from composer.callbacks import LRMonitor, MemoryMonitor, SpeedMonitor, RuntimeEstimator
 from composer.loggers import ProgressBarLogger, WandBLogger
 from composer.optim import CosineAnnealingWithWarmupScheduler, DecoupledSGDW
 from composer.utils import dist, reproducibility
@@ -116,6 +116,7 @@ def main(config):
     )  # Measures throughput as samples/sec and tracks total training time
     lr_monitor = LRMonitor()  # Logs the learning rate
     memory_monitor = MemoryMonitor()  # Logs memory utilization
+    runtime_estimator = RuntimeEstimator()
 
     # Callback for checkpointing
     print('Built Speed, LR, and Memory monitoring callbacks\n')
@@ -187,7 +188,7 @@ def main(config):
         algorithms=algorithms,
         loggers=loggers,
         max_duration=config.max_duration,
-        callbacks=[speed_monitor, lr_monitor, memory_monitor],
+        callbacks=[speed_monitor, lr_monitor, memory_monitor, runtime_estimator],
         save_folder=config.save_folder,
         save_interval=config.save_interval,
         save_num_checkpoints_to_keep=config.save_num_checkpoints_to_keep,
