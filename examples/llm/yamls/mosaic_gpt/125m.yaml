@@ -114,7 +114,7 @@ loggers:
   wandb:
     entity: mosaic-ml
     project: runtime-estimator
-    name: ${COMPOSER_RUN_NAME}
+    name: runtime-estimator
 
 # Checkpoint to local filesystem or remote object store
 # save_interval: 500ba
