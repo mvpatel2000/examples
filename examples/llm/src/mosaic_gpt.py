@@ -565,10 +565,8 @@ class ComposerMosaicGPT(ComposerModel):
             self.eval_metrics = evaluator_metrics
 
     def flops_per_batch(self, batch):
-        print(batch)
-        print(len(batch[0]))
         if self.__num_fwd_flops:
-            return self.__num_fwd_flops * 3 * len(batch)
+            return self.__num_fwd_flops * 3 * batch['input_ids'].shape[0]
         n_params = sum(p.numel() for p in self.parameters())
         # the number of paramters is approximately the number of multiply-accumulates (MAC) in the network
         # each MAC has 2 FLOPs - we multiply by 2 ie 2 * n_param
@@ -579,4 +577,4 @@ class ComposerMosaicGPT(ComposerModel):
         attn_flops_per_seq = self.model.cfg.n_layers * 2 * 2 * (
             self.model.cfg.d_model * (self.model.cfg.max_seq_len**2))
         self.__num_fwd_flops = params_flops_per_seq + attn_flops_per_seq
-        return self.__num_fwd_flops * 3 * len(batch)
+        return self.__num_fwd_flops * 3 * batch['input_ids'].shape[0]
