@@ -227,6 +227,7 @@ class SpeedMonitorMFU(Callback):
             if hasattr(composer_model, 'num_fwd_flops'):
                 assert isinstance(composer_model.num_fwd_flops, (int, float))
                 # Assume that training flops is 3x fwd flops (1 fwd, 2 bkw)
+                print(f'FLOPS: {composer_model.num_fwd_flops}, flops_per_sample: {composer_model.num_fwd_flops * 3}')
                 flops_per_sec = 3 * composer_model.num_fwd_flops * samples_per_sec
                 logger.log_metrics({'throughput/flops_per_sec': flops_per_sec})
                 dev_flops_per_sec = flops_per_sec / world_size
