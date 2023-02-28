@@ -565,7 +565,7 @@ class ComposerMosaicGPT(ComposerModel):
             self.eval_metrics = evaluator_metrics
 
     def flops_per_batch(self, batch):
-        print(batch['input_ids'].shape[0])
+        print(batch['input_ids'].shape)
         if self.__num_fwd_flops:
             return self.__num_fwd_flops * 3 * batch['input_ids'].shape[0]
         n_params = sum(p.numel() for p in self.parameters())
